@@ -1,7 +1,8 @@
 const imageUrl = "puzzle.png";
 
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+
 document.addEventListener("DOMContentLoaded", () => {
-  // const tiles = [...Array(15).keys()].map((x) => x + 1).concat(null);
   const tiles = [4, 2, 6, 1, 5, null, 8, 3, 7];
 
   const puzzleElm = document.querySelector("#puzzle");
@@ -12,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function createTile(value) {
     const tile = document.createElement("div");
+    const img = document.createElement("div");
     const { x, y } = indexToPosition(tiles.indexOf(value));
     tile.className = "tile";
     let bgStyle = "";
@@ -21,7 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const bgPosition = `background-position: ${-x * 100}% ${-y * 100}%;`;
       bgStyle = `${bgImage} ${bgPosition}`;
     }
-    tile.style = `transform: translate(${x * 100}%, ${y * 100}%); ${bgStyle}`;
+    tile.style = `transform: translate(${x * 100}%, ${y * 100}%); `;
+    img.style = `${bgStyle}`;
+    tile.appendChild(img);
     tile.addEventListener("click", () => moveTile(value));
     tile.setAttribute("data-tile", value);
     return tile;
