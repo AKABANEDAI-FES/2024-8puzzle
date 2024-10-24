@@ -72,3 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderPuzzle();
 });
+
+window.addEventListener("beforeunload", (e) => {
+  e.preventDefault();
+  e.returnValue = "";
+});
