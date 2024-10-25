@@ -1,4 +1,5 @@
-const imageUrl = "puzzle.png";
+import "./styles.css";
+import imageUrl from "./puzzle.png";
 
 document.addEventListener("contextmenu", (e) => e.preventDefault());
 
