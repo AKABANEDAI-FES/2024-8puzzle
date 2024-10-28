@@ -21,7 +21,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background-image: url("puzzle.png");
+  background-image: url("./puzzle.png");
   background-size: 100% 100%;
 }
 
