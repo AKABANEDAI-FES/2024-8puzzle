@@ -1,5 +1,7 @@
-import { UserConfig } from "vite";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-export default {
-  base: "/2024-8puzzle/",
-} satisfies UserConfig;
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
