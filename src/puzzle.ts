@@ -140,7 +140,7 @@ export class Puzzle extends Game {
       col * size + offset.x,
       row * size + offset.y,
       size,
-      size
+      size,
     );
   }
 }
