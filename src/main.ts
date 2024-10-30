@@ -3,7 +3,6 @@ import { Puzzle } from "./puzzle";
 import "./style.css";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("Hello, World!");
   const puzzle = document.querySelector("#puzzle")!;
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
