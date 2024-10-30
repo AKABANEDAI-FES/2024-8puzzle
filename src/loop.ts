@@ -1,6 +1,6 @@
 import type { Game } from "./game";
 
-const FRAME_SIZE = (1.0 / 60.0) * 1000.0;
+const FRAME_SIZE = (1.0 / 120.0) * 1000.0;
 
 export class GameLoop {
   lastFrame: number;

@@ -1,7 +1,12 @@
 import { Game } from "./game";
 import puzzle from "./puzzle.png";
 
-export function indexToCoordinate(index: number) {
+type Rect = {
+  x: number;
+  y: number;
+};
+
+export function indexToCoordinate(index: number): Rect {
   return { x: index % 3, y: Math.floor(index / 3) };
 }
 
@@ -25,7 +30,28 @@ function resizeImage(img: HTMLImageElement, size: number) {
 
 export class Puzzle extends Game {
   image: HTMLCanvasElement = document.createElement("canvas");
-  tiles = [4, 2, 6, 1, 5, null, 8, 3, 7];
+  tiles = [
+    [4, 2, 6],
+    [1, 5, null],
+    [8, 3, 7],
+  ];
+  animatedTile: Rect | null = null;
+  progress = 0;
+
+  constructor(canvas: HTMLCanvasElement) {
+    super(canvas);
+    this.canvas.addEventListener("click", this.handleClick.bind(this));
+  }
+
+  get empty() {
+    return indexToCoordinate(this.tiles.flat().indexOf(null));
+  }
+
+  get isSolved(): boolean {
+    return this.tiles.flat().every((value, index) => {
+      return value === null || value === index + 1;
+    });
+  }
 
   async initialize(): Promise<void> {
     const img = await loadImage(puzzle);
@@ -34,27 +60,87 @@ export class Puzzle extends Game {
 
   draw(): void {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.tiles.forEach(this.drawTile.bind(this));
+    if (this.isSolved) {
+      this.context.drawImage(this.image, 0, 0);
+    }
+    this.tiles.forEach((row, y) => {
+      row.forEach((value, x) => {
+        this.drawTile(value, x, y);
+      });
+    });
   }
 
-  update(): void {}
+  update(): void {
+    if (this.animatedTile === null) {
+      return;
+    }
+    this.progress += 0.1;
+    if (this.progress >= 1) {
+      this.swapTiles(this.animatedTile.x, this.animatedTile.y);
+      this.animatedTile = null;
+      this.progress = 0;
+    }
+  }
 
-  private drawTile(tile: number | null) {
-    const idx = this.tiles.indexOf(tile);
-    if (idx === -1 || tile === null) return;
-    const { x, y } = indexToCoordinate(idx);
-    const { x: vx, y: vy } = indexToCoordinate(tile);
+  private move(x: number, y: number): void {
+    if (this.animatedTile || !this.isAdjacentToEmpty(x, y) || this.isSolved) {
+      return;
+    }
+    this.animatedTile = { x, y };
+  }
+
+  private swapTiles(x: number, y: number): void {
+    const { x: emptyX, y: emptyY } = this.empty;
+    const temp = this.tiles[y][x];
+    this.tiles[y][x] = null;
+    this.tiles[emptyY][emptyX] = temp;
+  }
+
+  private isAdjacentToEmpty(x: number, y: number): boolean {
+    const { x: emptyX, y: emptyY } = this.empty;
+    return (
+      (x === emptyX && Math.abs(y - emptyY) === 1) ||
+      (y === emptyY && Math.abs(x - emptyX) === 1)
+    );
+  }
+
+  private handleClick(e: MouseEvent): void {
+    const rect = this.canvas.getBoundingClientRect();
+    const h = rect.height / 3;
+    const w = rect.width / 3;
+    const x = Math.floor((e.clientX - rect.left) / w);
+    const y = Math.floor((e.clientY - rect.top) / h);
+    this.move(x, y);
+  }
+
+  private drawTile(value: number | null, col: number, row: number): void {
+    if (value === null) {
+      return;
+    }
     const size = this.canvas.width / 3;
+    const { x: sx, y: sy } = indexToCoordinate(value - 1);
+    let offset = { x: 0, y: 0 };
+    if (
+      this.animatedTile &&
+      this.animatedTile.x === col &&
+      this.animatedTile.y === row
+    ) {
+      const { x: ex, y: ey } = this.empty;
+      offset = {
+        x: (ex - col) * size * this.progress,
+        y: (ey - row) * size * this.progress,
+      };
+    }
     this.context.drawImage(
       this.image,
-      vx * size,
-      vy * size,
+      sx * size,
+      sy * size,
       size,
       size,
-      x * size,
-      y * size,
+      col * size + offset.x,
+      row * size + offset.y,
       size,
-      size,
+      size
     );
   }
 }
