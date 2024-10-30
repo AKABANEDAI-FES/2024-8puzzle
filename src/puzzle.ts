@@ -62,12 +62,13 @@ export class Puzzle extends Game {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     if (this.isSolved) {
       this.context.drawImage(this.image, 0, 0);
-    }
-    this.tiles.forEach((row, y) => {
-      row.forEach((value, x) => {
-        this.drawTile(value, x, y);
+    } else {
+      this.tiles.forEach((row, y) => {
+        row.forEach((value, x) => {
+          this.drawTile(value, x, y);
+        });
       });
-    });
+    }
   }
 
   update(): void {
@@ -140,7 +141,7 @@ export class Puzzle extends Game {
       col * size + offset.x,
       row * size + offset.y,
       size,
-      size,
+      size
     );
   }
 }
