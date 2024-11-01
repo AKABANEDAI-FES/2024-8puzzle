@@ -32,8 +32,8 @@ export class Puzzle extends Game {
   image: HTMLCanvasElement = document.createElement("canvas");
   tiles = [
     [4, 2, 6],
-    [1, 5, null],
-    [8, 3, 7],
+    [1, 5, 7],
+    [8, 3, null],
   ];
   animatedTile: Rect | null = null;
   progress = 0;
